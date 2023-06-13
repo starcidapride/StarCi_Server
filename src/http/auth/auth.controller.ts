@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, Res, UseGuards, Headers } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Query, Res, UseGuards, Headers, UseInterceptors } from '@nestjs/common'
 import { Response } from 'express'
 import { LocalAuthGuard } from '@http/auth/guards/local.guard'
 import { AuthService } from '@http/auth/auth.service'
@@ -8,6 +8,7 @@ import { user } from '@prisma/client'
 import { SignUpGuard } from './guards/sign-up.guard'
 import { RefreshGuard } from './guards/refresh.guard'
 import { JwtAuthGuard } from './guards/jwt.guard'
+import { SignUpInterceptor } from './interceptors/sign-up.interceptor'
 
 @Controller('api/auth')
 export class AuthController {
@@ -22,6 +23,7 @@ export class AuthController {
 	}
 
     @UseGuards(SignUpGuard)
+	@UseInterceptors(SignUpInterceptor)
     @Put('sign-up')
     async handleSignUp(@Body() body: SignUpRequest): Promise<{ email: string }> {
     	return await this.authService.performSignUp(body)
