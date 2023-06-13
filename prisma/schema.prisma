@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model refresh_token {
+  token String @id @db.VarChar(100)
+  email String @db.VarChar(50)
+  user  user   @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "user_fk")
+
+  @@index([email], map: "user_fk_idx")
+}
+
+model user {
+  email         String          @id @db.VarChar(50)
+  password      String          @db.VarChar(100)
+  username      String          @db.VarChar(20)
+  firstName     String          @db.VarChar(50)
+  lastName      String          @db.VarChar(50)
+  picture       Bytes?
+  isVerified    Int             @default(0) @db.TinyInt
+  refresh_token refresh_token[]
+}

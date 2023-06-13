@@ -2,6 +2,14 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "paths": {
+      "@config/*": ["src/config/*"],
+      "@database/*": ["src/database/*"],
+      "@defined-types/*": ["src/types/*"],
+      "@utils/*": ["src/utils/*"],
+      "@http/*": ["src/http/*"],
+      "@decorators/*": ["src/decorators/*"]
+    },
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
