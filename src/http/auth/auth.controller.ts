@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Put, Query, Res, UseGuards, Headers, UseIn
 import { Response } from 'express'
 import { LocalAuthGuard } from '@http/auth/guards/local.guard'
 import { AuthService } from '@http/auth/auth.service'
-import { AuthTokenSet, SignInResponse, SignUpRequest } from '@defined-types/auth.type'
+import { AuthTokenSet, PresentableUser, SignInResponse, SignUpRequest } from '@defined-types/auth.type'
 import { User } from '@decorators/user.decorator'
 import { user } from '@prisma/client'
 import { SignUpGuard } from './guards/sign-up.guard'
@@ -25,7 +25,7 @@ export class AuthController {
     @UseGuards(SignUpGuard)
 	@UseInterceptors(SignUpInterceptor)
     @Put('sign-up')
-    async handleSignUp(@Body() body: SignUpRequest): Promise<{ email: string }> {
+    async handleSignUp(@Body() body: SignUpRequest): Promise<PresentableUser> {
     	return await this.authService.performSignUp(body)
     }
 
@@ -46,17 +46,15 @@ export class AuthController {
     @UseGuards(RefreshGuard)
     @Get('refresh')
     async handleRefresh(@Headers('authorization') authHeader: string): Promise<AuthTokenSet> {
-    	console.log(authHeader)
     	const refreshToken = authHeader.split(' ')[1]
-
     	return await this.authService.performRefresh(refreshToken)
 
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('launch')
-    async handleInit(@User() user: user): Promise<user> {
-    	return user
+    async handleInit(@User() user: user): Promise<PresentableUser> {
+    	return await this.authService.performLaunch(user)
     }
 
 }

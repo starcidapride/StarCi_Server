@@ -46,24 +46,27 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	async performSignIn(user: user): Promise<SignInResponse> {
-		const tokenPair = await this.generateAuthTokenSet(user.email)
-
-		if (!user.isVerified) {
-			throw new UnauthorizedException('Prior to continuing, it\'s important that you verify your account through your email. Furthermore, we have sent you another email as a backup option in case you have misplaced or cannot locate the initial email.')
-		}
-		const presentableUser: PresentableUser = {
+	private getPresentableUser(user: user) : PresentableUser {
+		return {
 			email: user.email,
-			picture: user.picture?.toString('base64') ?? undefined,
+			...(user.picture !== null && {picture: user.picture.toString('base64')}),
 			username: user.username,
 			firstName: user.firstName,
 			lastName: user.lastName
 		}
+	}
+	async performSignIn(user: user): Promise<SignInResponse> {
+		const authTokenSet = await this.generateAuthTokenSet(user.email)
 
-		return { tokenPair, presentableUser }
+		if (!user.isVerified) {
+			throw new UnauthorizedException('Prior to continuing, it\'s important that you verify your account through your email. Furthermore, we have sent you another email as a backup option in case you have misplaced or cannot locate the initial email.')
+		}
+		const presentableUser = this.getPresentableUser(user)
+
+		return { authTokenSet, presentableUser }
 	}
 
-	async performSignUp(data: SignUpRequest): Promise<SignUpResponse> {
+	async performSignUp(data: SignUpRequest): Promise<PresentableUser> {
 		const { email, password, username, firstName, lastName } = data
 	
 		const hashedPassword = this.cryptoService.createHashSHA256(password)
@@ -78,7 +81,7 @@ export class AuthService {
 
 		await this.mailerService.sendMail(email, username)
 
-		return { email }
+		return this.getPresentableUser(user)
 
 	}
 
@@ -88,7 +91,7 @@ export class AuthService {
 			const email = payload.email
 
 			const queryToken = this.refreshTokenDbService.getToken(refreshToken)
-			if (queryToken == null) {
+			if (queryToken === null) {
 				throw new HttpException('Token khôi phục không tồn tại trong cơ sở dữ liệu', HttpStatus.BAD_REQUEST)
 			}
 			return await this.generateAuthTokenSet(email)
@@ -96,6 +99,10 @@ export class AuthService {
 		} catch (ex) {
 			throw new HttpException('Token khôi phục đã hết hạn hoặc không hợp lệ.', HttpStatus.BAD_REQUEST)
 		}
+	}
+
+	async performLaunch(user: user): Promise<PresentableUser> {
+		return this.getPresentableUser(user)
 	}
 
 

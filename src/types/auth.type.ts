@@ -24,7 +24,7 @@ export type SignInRequest = {
 }
 
 export type SignInResponse = {
-    tokenPair: AuthTokenSet,
+    authTokenSet: AuthTokenSet,
     presentableUser: PresentableUser
 }
 
