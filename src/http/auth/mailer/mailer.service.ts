@@ -13,11 +13,10 @@ export class MailerService {
 		
 	private generateVerifyToken(email: string): string {
 		const payload = { email }
-		const token = this.jwtService.sign(payload, {
+		return this.jwtService.sign(payload, {
 			expiresIn: jwtConfig().verifyTokenExpiryTime,
 			secret: jwtConfig().secret,
 		})
-		return token
 	}
 
 	private transporter = createTransport({

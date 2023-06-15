@@ -107,27 +107,25 @@ export class AuthService {
 
 
 	async performVerify(email: string, token: string): Promise<VerifyResponse> {
-		let result: VerifyResponse
 		try {
 			const decoded = this.jwtService.verify<JwtPayload>(token, { secret: jwtConfig().secret })
 
 			const isVerified = (await this.userDbService.getUser(decoded.email)).isVerified
 
 			if (isVerified) {
-				result = 'already confirmed'
+				return 'already confirmed'
 			} else {
 				await this.userDbService.updateUser(email, { isVerified: 1 })
-				result = 'success'
+				return 'success'
 			}
 
 		} catch (ex) {
 			if (ex instanceof TokenExpiredError) {
-				result = 'time out'
+				return 'time out'
 			} else {
-				result = 'not found'
+				return 'not found'
 			}
 		}
-		return result
 	}
 }
 

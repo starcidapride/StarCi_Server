@@ -35,12 +35,12 @@ export class SignUpInterceptor implements NestInterceptor {
 
 		const usernameLengthRegex = /^.{6,20}$/
 		if (!(username.match(usernameLengthRegex))) {
-			errors.push('Tên người dùng cần tối thiểu 6 kí tự và tối đa 20 kí tự.')
+			errors.push('Username cần tối thiểu 6 kí tự và tối đa 20 kí tự.')
 		}
 
 		const nameRegex = /^.{2,50}$/
 		if (!firstName.match(nameRegex)) {
-			errors.push('Tên cần tối thiểu 2 kí tự và tối đa 20 kí tự.')
+			errors.push('Tên riêng cần tối thiểu 2 kí tự và tối đa 20 kí tự.')
 		}
 
 		if (!lastName.match(nameRegex)) {

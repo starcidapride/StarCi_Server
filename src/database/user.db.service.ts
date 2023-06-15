@@ -18,15 +18,16 @@ export class UserDbService {
         }>
 	): Promise<user | null> {
 		try {
-			return await this.prismaService.user.findUniqueOrThrow({
+
+			return await this.prismaService.user.findFirstOrThrow({
 				where: {
 					email,
-					...(data?.password !== undefined && { password: data.password }),
-					...(data?.username !== undefined && { username: data.username }),
-					...(data?.firstName !== undefined && { firstName: data.firstName }),
-					...(data?.lastName !== undefined && { lastName: data.lastName }),
-					...(data?.picture !== undefined && { picture: data.picture }),
-					...(data?.isVerified !== undefined && { isVerified: data.isVerified }),
+					...(data?.password && { password: data.password }),
+					...(data?.username && { username: data.username }),
+					...(data?.firstName && { firstName: data.firstName }),
+					...(data?.lastName && { lastName: data.lastName }),
+					...(data?.picture && { picture: data.picture }),
+					...(data?.isVerified && { isVerified: data.isVerified }),
 				}
 			})
 		} catch (ex) {
