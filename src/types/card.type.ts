@@ -9,7 +9,8 @@ export type ChampionCard = {
 }
 
 export type EquipmentCard = {
-    // 
+    class : equipment_card_class,
+    description: string
 }
 
 export type SpellCard = {
@@ -28,3 +29,4 @@ export type SearchCardsRequest = {
     championRole: number,
     equipmentClass: number
 }
+
