@@ -12,11 +12,11 @@ import { TokenExpiredError } from 'jsonwebtoken'
 @Injectable()
 export class AuthService {
 	constructor(
-        private readonly userDbService: UserDbService,
-        private readonly jwtService: JwtService,
-        private readonly refreshTokenDbService: RefreshTokenDbService,
-        private readonly mailerService: MailerService,
-        private readonly cryptoService: CryptoService
+		private readonly userDbService: UserDbService,
+		private readonly jwtService: JwtService,
+		private readonly refreshTokenDbService: RefreshTokenDbService,
+		private readonly mailerService: MailerService,
+		private readonly cryptoService: CryptoService
 
 	) { }
 	async validateUser(email: string, password: string): Promise<user> {
@@ -46,10 +46,10 @@ export class AuthService {
 		return { accessToken, refreshToken }
 	}
 
-	private getPresentableUser(user: user) : PresentableUser {
+	private getPresentableUser(user: user): PresentableUser {
 		return {
 			email: user.email,
-			...(user.picture !== null && {picture: user.picture.toString('base64')}),
+			...(user.picture !== null && { picture: user.picture.toString('base64') }),
 			username: user.username,
 			firstName: user.firstName,
 			lastName: user.lastName
@@ -68,7 +68,7 @@ export class AuthService {
 
 	async performSignUp(data: SignUpRequest): Promise<PresentableUser> {
 		const { email, password, username, firstName, lastName } = data
-	
+
 		const hashedPassword = this.cryptoService.createHashSHA256(password)
 		const user: user = {
 			email, password: hashedPassword, username, firstName, lastName, picture: null, isVerified: 0
@@ -86,19 +86,27 @@ export class AuthService {
 	}
 
 	async performRefresh(refreshToken: string): Promise<AuthTokenSet> {
-		try {
-			const payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, { secret: jwtConfig().secret })
-			const email = payload.email
-
-			const queryToken = this.refreshTokenDbService.getToken(refreshToken)
-			if (queryToken === null) {
-				throw new HttpException('Token khôi phục không tồn tại trong cơ sở dữ liệu', HttpStatus.BAD_REQUEST)
-			}
-			return await this.generateAuthTokenSet(email)
-
-		} catch (ex) {
-			throw new HttpException('Token khôi phục đã hết hạn hoặc không hợp lệ.', HttpStatus.BAD_REQUEST)
+		let payload: JwtPayload
+		try{
+		 	payload = await this.jwtService.verifyAsync<JwtPayload>(refreshToken, { secret: jwtConfig().secret })
+		} catch (ex){
+			throw new HttpException('The refresh token has either expired or is invalid.', HttpStatus.BAD_REQUEST)
 		}
+
+		const email = payload.email
+
+		// const queryToken = await this.refreshTokenDbService.getToken(refreshToken)
+		// if (queryToken === null) {
+		// 	throw new HttpException('The database does not contain the refresh token.', HttpStatus.BAD_REQUEST)
+		// }
+
+		const tokenSet = await this.generateAuthTokenSet(email)
+		await this.refreshTokenDbService.addToken({
+			token: tokenSet.refreshToken,
+			email
+		}
+		)
+		return tokenSet
 	}
 
 	async performLaunch(user: user): Promise<PresentableUser> {

@@ -4,6 +4,7 @@ import mailerConfig from '@config/mailer.config'
 import serverConfig from '@config/server.config'
 import { AuthModule } from '@http/auth/auth.module'
 import { CardModule } from '@http/cards/card.module'
+import { DeckModule } from '@http/decks/deck.module'
 import { ProfileModule } from '@http/profile/profile.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
@@ -20,7 +21,8 @@ import { ConfigModule } from '@nestjs/config'
 	}),
 	AuthModule,
 	ProfileModule,
-	CardModule
+	CardModule,
+	DeckModule
 	],
 	controllers: [],
 	providers: [],

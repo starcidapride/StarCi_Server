@@ -11,9 +11,9 @@ export class SearchCardsGuard implements CanActivate {
 		const body : unknown | SearchCardsRequest = request.body
 
 		if (this.isSearchCardsRequest(body) && 
-        (!Number.isInteger(body.type) || body.type < 0 || body.type > 4) && 
-        (!Number.isInteger(body.equipmentClass) || body.equipmentClass < 0 || body.equipmentClass > 6) &&
-        (!Number.isInteger(body.equipmentClass) || body.equipmentClass < 0 || body.equipmentClass > 3))
+        !( body.type < 0 || body.type > 4) && 
+        !( body.equipmentClass < 0 || body.equipmentClass > 6) &&
+        !( body.equipmentClass < 0 || body.equipmentClass > 3))
 		{
 			return true
 		}

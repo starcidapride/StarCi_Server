@@ -11,6 +11,7 @@ model card {
   name           String          @id @db.VarChar(50)
   type           card_type
   champion_card  champion_card?
+  deck_detail    deck_detail[]
   equipment_card equipment_card?
   spell_card     spell_card?
 }
@@ -34,7 +35,7 @@ model equipment_card {
 }
 
 model refresh_token {
-  token String @id @db.VarChar(100)
+  token String @id @db.VarChar(200)
   email String @db.VarChar(50)
   user  user   @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "user_fk")
 
@@ -55,7 +56,28 @@ model user {
   lastName      String          @db.VarChar(50)
   picture       Bytes?
   isVerified    Int             @default(0) @db.TinyInt
+  deck          deck[]
   refresh_token refresh_token[]
+}
+
+model deck {
+  name        String        @id @db.VarChar(20)
+  email       String        @db.VarChar(50)
+  user        user          @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "user_fk_3")
+  deck_detail deck_detail[]
+
+  @@index([email], map: "user_fk_idx")
+}
+
+model deck_detail {
+  deckName   String @db.VarChar(50)
+  cardName   String @db.VarChar(50)
+  inPlayDeck Int    @db.TinyInt
+  card       card   @relation(fields: [cardName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "card_fk")
+  deck       deck   @relation(fields: [deckName], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "deck_fk")
+
+  @@id([deckName, cardName])
+  @@index([cardName], map: "card_fk_idx")
 }
 
 enum card_type {

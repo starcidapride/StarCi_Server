@@ -7,31 +7,35 @@ import { ClassMap, RoleMap, TypeMap } from 'src/maps/card.map'
 export class CardService {
 	constructor(private readonly cardDbService: CardDbService){}
 	async performSearchCards(data: SearchCardsRequest): Promise<Card[]>{
+		
 		const cards: Card[] = []
 		
-		let name : string
-		if (!data.name){
-			name = ''
-		}
-	
 		const type = data.type == 0 ? null : TypeMap[data.type]
 
-		const generalCards = await this.cardDbService.getCards(name, type)
-		
+		const generalCards = await this.cardDbService.getCards(data.name, type)
 
 		for (const card of generalCards){
 			let details: ChampionCard | EquipmentCard | SpellCard | null
 			switch (card.type){
 			case 'Champion':
 				const role = data.championRole == 0 ? null : RoleMap[data.championRole]
-				details = await this.cardDbService.getChampionCard(name, role)
+				details = await this.cardDbService.getChampionCard(card.name, role)
+				if (details == null){
+					continue
+				}
 				break
 			case 'Equipment':
 				const equipmentClass = data.equipmentClass == 0 ? null : ClassMap[data.equipmentClass]
-				details = await this.cardDbService.getEquipmentCard(name, equipmentClass)
+				details = await this.cardDbService.getEquipmentCard(card.name, equipmentClass)
+				if (details == null){
+					continue
+				}
 				break
 			case 'Spell':
-
+				details = await this.cardDbService.getSpellCard(card.name)
+				if (details == null){
+					continue
+				}
 				break
 			case 'Summon':
 				details = null
