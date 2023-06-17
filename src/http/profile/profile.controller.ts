@@ -14,7 +14,7 @@ export class ProfileController {
 	) { }
 
 	@UseGuards(JwtAuthGuard, UploadImageGuard)
-    @Put('/upload-picture')
+    @Put('upload-picture')
 	async handleUploadPicture(@User() user: user, @Body() body : {picture: string}): Promise<PresentableUser>{
 		const {picture} = body
 		return this.profileService.performUploadPicture(user.email, picture)

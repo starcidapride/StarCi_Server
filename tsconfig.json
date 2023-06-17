@@ -8,7 +8,8 @@
       "@defined-types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"],
       "@http/*": ["src/http/*"],
-      "@decorators/*": ["src/decorators/*"]
+      "@decorators/*": ["src/decorators/*"],
+      "@maps": ["src/maps/"]
     },
     "removeComments": true,
     "emitDecoratorMetadata": true,

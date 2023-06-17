@@ -7,12 +7,44 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model card {
+  name           String          @id @db.VarChar(50)
+  type           card_type
+  champion_card  champion_card?
+  equipment_card equipment_card?
+  spell_card     spell_card?
+}
+
+model champion_card {
+  name            String             @id @db.VarChar(50)
+  maxHealth       Int
+  attackDamage    Int
+  armor           Int
+  magicResistance Int
+  role            champion_card_role
+  card            card               @relation(fields: [name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "card_fk_1")
+}
+
+model equipment_card {
+  name        String               @id @db.VarChar(50)
+  price       Int
+  class       equipment_card_class
+  description String               @db.VarChar(500)
+  card        card                 @relation(fields: [name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "card_fk_2")
+}
+
 model refresh_token {
   token String @id @db.VarChar(100)
   email String @db.VarChar(50)
   user  user   @relation(fields: [email], references: [email], onDelete: NoAction, onUpdate: NoAction, map: "user_fk")
 
   @@index([email], map: "user_fk_idx")
+}
+
+model spell_card {
+  name        String @id @db.VarChar(50)
+  description String @db.VarChar(500)
+  card        card   @relation(fields: [name], references: [name], onDelete: NoAction, onUpdate: NoAction, map: "card_fk_3")
 }
 
 model user {
@@ -24,4 +56,26 @@ model user {
   picture       Bytes?
   isVerified    Int             @default(0) @db.TinyInt
   refresh_token refresh_token[]
+}
+
+enum card_type {
+  Champion
+  Equipment
+  Spell
+  Summon
+}
+
+enum champion_card_role {
+  Warrior
+  Tank
+  Support
+  Mage
+  Marksman
+  Assassin
+}
+
+enum equipment_card_class {
+  Attack
+  Magic
+  Defense
 }

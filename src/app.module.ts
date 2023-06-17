@@ -3,6 +3,7 @@ import jwtConfig from '@config/jwt.config'
 import mailerConfig from '@config/mailer.config'
 import serverConfig from '@config/server.config'
 import { AuthModule } from '@http/auth/auth.module'
+import { CardModule } from '@http/cards/card.module'
 import { ProfileModule } from '@http/profile/profile.module'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
@@ -18,7 +19,8 @@ import { ConfigModule } from '@nestjs/config'
 		],
 	}),
 	AuthModule,
-	ProfileModule
+	ProfileModule,
+	CardModule
 	],
 	controllers: [],
 	providers: [],

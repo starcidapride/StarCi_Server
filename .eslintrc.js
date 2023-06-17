@@ -22,6 +22,7 @@ module.exports = {
 			'error',
 			'tab'
 		],
+		'no-case-declarations': 'off',
 		'no-mixed-spaces-and-tabs': 'off',
 		'linebreak-style': 'off',
 		'quotes': [
